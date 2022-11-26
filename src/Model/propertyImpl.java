@@ -56,8 +56,8 @@ public class propertyImpl implements property {
   }
 
   @Override
-  public Map<String, String> addTenantToUnit(String tenantName, String buildingNo, String unitNo) {
-    return null;
+  public void addTenantToUnit(String tenantName, String buildingName, String unitNo, String tenantPassword) {
+
   }
 
   @Override
@@ -68,6 +68,11 @@ public class propertyImpl implements property {
   @Override
   public void createBuilding(String companyName, String amenities, String address, String buildingName, String zipcode, String noOfFloors, String noOfParkingSpots, String type) {
 
+  }
+
+  @Override
+  public String getTenants() {
+    return null;
   }
 
   @Override
