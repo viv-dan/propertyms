@@ -127,13 +127,14 @@ public interface property {
   void createBuilding(String companyName, String amenities, String address, String buildingName,
                       String zipcode, String noOfFloors, String noOfParkingSpots, String type);
 
-
   /**
    * The method returns the tenant of a particular unit in the building.
    *
-   * @return the name of the tenant of a particular unit
+   * @param buildingName the name of the building
+   * @param unit the number of the unit
+   * @return the tenant of the particular unit
    */
-  String getTenants();
+  String getTenants(String buildingName, String unit);
 
   /**
    * The method helps in adding units to a particular building.
