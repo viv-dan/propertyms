@@ -46,7 +46,7 @@ public interface property {
    * @param unitNo the number of the unit
    * @param desc the description of the request to be created
    */
-  void createMaintenanceRequest(String buildingName, String unitNo, String desc);
+  void createMaintenanceRequest(String buildingName, int unitNo, String desc);
 
   /**
    * The method returns all the past and active maintenance requests that are attached to a
@@ -57,7 +57,7 @@ public interface property {
    * @return a list of maintenance requests as strings that are concatenated as Description and
    *          status of it
    */
-  List<String> getMaintenanceRequests(String buildingName, String unitNo);
+  List<String> getMaintenanceRequests(String buildingName, int unitNo);
 
   /**
    * The method checks if the particular unit is available or not.
@@ -66,7 +66,7 @@ public interface property {
    * @param unitNo the number of the unit
    * @return true if the unit is available to lease out. False otherwise
    */
-  boolean isUnitAvailable(String buildingName, String unitNo);
+  boolean isUnitAvailable(String buildingName, int unitNo);
 
   /**
    * The method adds a maintenance personnel to a particular building.
@@ -101,7 +101,7 @@ public interface property {
    * @param unitNo the number of the unit
    * @param tenantPassword the password of the tenant
    */
-  void addTenantToUnit(String tenantName, String buildingName, String unitNo, String tenantPassword);
+  void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword);
 
   /**
    * The method helps create a company in the database.
@@ -134,7 +134,7 @@ public interface property {
    * @param unit the number of the unit
    * @return the tenant of the particular unit
    */
-  String getTenants(String buildingName, String unit);
+  String getTenants(String buildingName, int unit);
 
   /**
    * The method helps in adding units to a particular building.

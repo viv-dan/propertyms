@@ -135,13 +135,13 @@ public class propertyImpl implements property {
    * @param desc         the description of the request to be created
    */
   @Override
-  public void createMaintenanceRequest(String buildingName, String unitNo, String desc) {
+  public void createMaintenanceRequest(String buildingName, int unitNo, String desc) {
     String sql_string = "call propertyproject.create_maintenance_requests(?,?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1,buildingName);
-      ps.setString(2,unitNo);
+      ps.setInt(2,unitNo);
       ps.setString(3, desc);
       ps.executeQuery();
     }catch(Exception e){
@@ -159,14 +159,14 @@ public class propertyImpl implements property {
    * status of it
    */
   @Override
-  public List<String> getMaintenanceRequests(String buildingName, String unitNo) {
+  public List<String> getMaintenanceRequests(String buildingName, int unitNo) {
     String sql_string = "call propertyproject.get_maintenance_requests(?, ?)";
     try{
       List<String> requests = new ArrayList<>();
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1, buildingName);
-      ps.setString(2, unitNo);
+      ps.setInt(2, unitNo);
       ResultSet rs = ps.executeQuery();
       while(rs.next()){
         requests.add(rs.getString("description")+" - "+rs.getString("status"));
@@ -185,13 +185,13 @@ public class propertyImpl implements property {
    * @return true if the unit is available to lease out. False otherwise
    */
   @Override
-  public boolean isUnitAvailable(String buildingName, String unitNo) {
+  public boolean isUnitAvailable(String buildingName, int unitNo) {
     String sql_string = "SELECT propertyproject.is_unit_available(?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1,buildingName);
-      ps.setString(2,unitNo);
+      ps.setInt(2,unitNo);
       ResultSet rs = ps.executeQuery();
       if(rs.next()) {
         return rs.getBoolean(1);
@@ -283,14 +283,14 @@ public class propertyImpl implements property {
    * @param tenantPassword the password of the tenant
    */
   @Override
-  public void addTenantToUnit(String tenantName, String buildingName, String unitNo, String tenantPassword) {
+  public void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword) {
     String sql_string = "call propertyproject.add_tenant_to_unit(?,?,?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1,tenantName);
       ps.setString(2,buildingName);
-      ps.setString(3,unitNo);
+      ps.setInt(3,unitNo);
       ps.setString(4,tenantPassword);
       ps.executeQuery();
     }catch(Exception e){
@@ -359,13 +359,13 @@ public class propertyImpl implements property {
    * @return the tenant of the particular unit
    */
   @Override
-  public String getTenants(String buildingName, String unit) {
+  public String getTenants(String buildingName, int unit) {
     String sql_string = "SELECT propertyproject.get_tenants(?, ?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1, buildingName);
-      ps.setString(2, unit);
+      ps.setInt(2, unit);
       ResultSet rs = ps.executeQuery();
       while(rs.next()){
        return rs.getString(1);
