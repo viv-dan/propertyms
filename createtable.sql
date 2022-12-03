@@ -102,7 +102,6 @@ CONSTRAINT tenant_with_table FOREIGN KEY (tid) REFERENCES tenant(tid)
 CREATE TABLE request(
 building_id INT not null,
 unit_no int not null,
-tid int not null,
 mid INT not null,
 r_description VARCHAR(50) not null,
 r_status BOOLEAN not null DEFAULT FALSE,
@@ -111,8 +110,6 @@ CONSTRAINT Building_with_table FOREIGN KEY (building_id) REFERENCES building(bid
 CONSTRAINT M_with_table FOREIGN KEY (mid) REFERENCES m_personnel(mid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT u_table FOREIGN KEY (unit_no) REFERENCES unit(unit_no)
-	ON UPDATE CASCADE ON DELETE RESTRICT,
-CONSTRAINT t_with_table FOREIGN KEY (tid) REFERENCES tenant(tid)
 	ON UPDATE CASCADE ON DELETE RESTRICT );
 
 
