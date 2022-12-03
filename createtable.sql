@@ -87,7 +87,7 @@ CREATE TABLE isleased(
 bid int not null,
 lid int not null,
 unit_no int not null,
-tid int not null,
+tid int not null unique,
 CONSTRAINT bd_with_table FOREIGN KEY (bid) REFERENCES building(bid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT lease_with_table FOREIGN KEY (lid) REFERENCES lease(lid)
