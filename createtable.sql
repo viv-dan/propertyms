@@ -102,7 +102,7 @@ CREATE TABLE request(
 building_id INT not null,
 unit_no int not null,
 mid INT not null,
-r_description VARCHAR(50) not null,
+r_description VARCHAR(200) not null,
 r_status BOOLEAN not null DEFAULT FALSE,
 CONSTRAINT Building_with_table FOREIGN KEY (building_id) REFERENCES building(bid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
