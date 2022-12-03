@@ -109,7 +109,7 @@ public interface property {
    * @param companyName the name of the company to be created
    * @param companyPassword the password of the company to be created
    */
-  void createCompany(String companyName, String companyPassword);
+  void createCompany(String companyName, String companyPassword, String email, String phno);
 
   /**
    * The method helps create a building with all the data that are passed such as amenities, name,

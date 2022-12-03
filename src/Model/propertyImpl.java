@@ -305,13 +305,15 @@ public class propertyImpl implements property {
    * @param companyPassword the password of the company to be created
    */
   @Override
-  public void createCompany(String companyName, String companyPassword) {
-    String sql_string = "call propertyproject.add_company(?,?)";
+  public void createCompany(String companyName, String companyPassword, String email, String phno) {
+    String sql_string = "call propertyproject.add_company(?,?,?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1,companyName);
       ps.setString(2,companyPassword);
+      ps.setString(3, email);
+      ps.setString(4, phno);
       ps.executeQuery();
     }catch(Exception e){
       throw new RuntimeException("Cannot add company!!");
