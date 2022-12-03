@@ -67,7 +67,6 @@ mid INT PRIMARY KEY,
 mname VARCHAR(50) NOT NULL,
 bid INT NOT NULL,
 phone_number VARCHAR(10) NOT NULL,
-type_of_personnel varchar(10) NOT NULL,
 CONSTRAINT building_has_personnel FOREIGN KEY (bid) REFERENCES building(bid)
 	ON UPDATE CASCADE ON DELETE CASCADE);
 
