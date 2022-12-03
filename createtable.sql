@@ -5,22 +5,23 @@ use propertyproject;
 -- Company Table
 CREATE TABLE management_company(
  cid INT auto_increment PRIMARY KEY,
- company_name VARCHAR(50) NOT NULL,
+ company_name VARCHAR(50) NOT NULL unique,
+ cpassword VARCHAR(50) NOT NULL,
  email_id VARCHAR(100) NOT NULL,
  phone_number CHAR(10) NOT NULL);
- 
- 
+
+
  -- Building Table
  CREATE TABLE building(
  bid INT auto_increment PRIMARY KEY,
  cid INT NOT NULL,
  address VARCHAR(600) NOT NULL,
- building_name VARCHAR(100) NOT NULL,
+ building_name VARCHAR(100) NOT NULL Unique,
  zipcode VARCHAR(10) NOT NULL,
  number_of_floors INT NOT NULL,
  parking_spots INT NOT NULL,
  type_of_building VARCHAR(10),
- CONSTRAINT company_manages_building FOREIGN KEY (cid) REFERENCES management_company(cid) 
+ CONSTRAINT company_manages_building FOREIGN KEY (cid) REFERENCES management_company(cid)
 	ON UPDATE CASCADE ON DELETE RESTRICT);
 
 
@@ -40,9 +41,9 @@ no_of_bathrooms INT NOT NULL,
 area DECIMAL(5,2) NOT NULL,
 price  DECIMAL(10,2),
 CONSTRAINT PRIMARY KEY (unit_no,bid),
-CONSTRAINT building_has_unit FOREIGN KEY (bid) REFERENCES building(bid) 
+CONSTRAINT building_has_unit FOREIGN KEY (bid) REFERENCES building(bid)
 	ON UPDATE CASCADE ON DELETE RESTRICT);
-    
+
 -- Lease Table
 CREATE TABLE lease(
 lid int PRIMARY KEY,
@@ -53,7 +54,8 @@ end_date DATE NOT NULL);
 -- Tenant Table
 CREATE TABLE tenant(
 tid INT AUTO_INCREMENT PRIMARY KEY,
-tname VARCHAR(50) NOT NULL,
+tpassword varchar(100) NOT NULL,
+tname VARCHAR(50) NOT NULL unique,
 date_of_birth DATE,
 occupation VARCHAR(10),
 phone_number VARCHAR(10) NOT NULL);
@@ -78,8 +80,8 @@ CONSTRAINT b_with_table FOREIGN KEY (bid) REFERENCES building(bid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT a_with_table FOREIGN KEY (aid) REFERENCES amenity(aid)
 	ON UPDATE CASCADE ON DELETE RESTRICT);
-    
-    
+
+
 -- Units Leased to Tenants
 CREATE TABLE isleased(
 lid int not null,
@@ -90,16 +92,19 @@ CONSTRAINT lease_with_table FOREIGN KEY (lid) REFERENCES lease(lid)
 CONSTRAINT unit_with_table FOREIGN KEY (unit_no) REFERENCES unit(unit_no)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT tenant_with_table FOREIGN KEY (tid) REFERENCES tenant(tid)
-	ON UPDATE CASCADE ON DELETE RESTRICT );   
+	ON UPDATE CASCADE ON DELETE RESTRICT );
 
 
--- Tenants Request for maintenance 
+-- Tenants Request for maintenance
 CREATE TABLE request(
+building_id INT not null,
 unit_no int not null,
 tid int not null,
 mid INT not null,
 r_description VARCHAR(50) not null,
 r_status BOOLEAN not null DEFAULT FALSE,
+CONSTRAINT Building_with_table FOREIGN KEY (building_id) REFERENCES building(bid)
+	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT M_with_table FOREIGN KEY (mid) REFERENCES m_personnel(mid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT u_table FOREIGN KEY (unit_no) REFERENCES unit(unit_no)
@@ -108,7 +113,9 @@ CONSTRAINT t_with_table FOREIGN KEY (tid) REFERENCES tenant(tid)
 	ON UPDATE CASCADE ON DELETE RESTRICT );
 
 
-    
+
+
+
 
 
 
