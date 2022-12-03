@@ -84,9 +84,12 @@ CONSTRAINT a_with_table FOREIGN KEY (aid) REFERENCES amenity(aid)
 
 -- Units Leased to Tenants
 CREATE TABLE isleased(
+bid int not null,
 lid int not null,
 unit_no int not null,
 tid int not null,
+CONSTRAINT bd_with_table FOREIGN KEY (bid) REFERENCES building(bid)
+	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT lease_with_table FOREIGN KEY (lid) REFERENCES lease(lid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT unit_with_table FOREIGN KEY (unit_no) REFERENCES unit(unit_no)
