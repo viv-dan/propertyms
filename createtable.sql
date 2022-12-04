@@ -29,7 +29,7 @@ CREATE TABLE management_company(
 
 CREATE TABLE amenity(
 aid int not null unique,
-description varchar(100) not null);
+description varchar(100) not null unique);
 
 
 -- Units in a Building Table
