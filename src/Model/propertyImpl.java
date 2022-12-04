@@ -5,7 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,7 @@ public class propertyImpl implements property {
    */
   @Override
   public boolean validateTenant(String username, String password) {
-    String sql_string = "SELECT sharkdb.validate_tenant(?,?)";
+    String sql_string = "SELECT propertyproject.validate_tenant(?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
@@ -110,16 +112,27 @@ public class propertyImpl implements property {
    */
   @Override
   public Map<String, String> getParticularBuildingInfo(String buildingName) {
-    String sql_string = "call propertyproject.get_building_info(?)";
+    String sql_string = "call propertyproject.get_building_amenities(?)";
+    Map<String, String> buildingInfo = new HashMap<>();
     try{
-      Map<String, String> buildingInfo = new HashMap<>();
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1, buildingName);
       ResultSet rs = ps.executeQuery();
       while(rs.next()){
-        buildingInfo.put("amenities", rs.getString("amenity"));
-        buildingInfo.put("unit", rs.getString("unit"));
+        buildingInfo.put("amenities", rs.getString("amenities"));
+      }
+    }catch(Exception e){
+      throw new RuntimeException("Cannot get info about the building!!");
+    }
+    sql_string = "call propertyproject.get_building_available_units(?)";
+    try{
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ps.setString(1, buildingName);
+      ResultSet rs = ps.executeQuery();
+      while(rs.next()){
+        buildingInfo.put("unit", rs.getString("units"));
       }
       return buildingInfo;
     }catch(Exception e){
@@ -155,7 +168,7 @@ public class propertyImpl implements property {
    *
    * @param buildingName the name of the building
    * @param unitNo       the number of the unit
-   * @return a list of maintenance requests as strings that are concatenated as Description and
+   * @return a list of maintenance requests as strings that are concatenated as it's ID, Description and
    * status of it
    */
   @Override
@@ -274,6 +287,16 @@ public class propertyImpl implements property {
     }
   }
 
+  private static Date getDateFromString(String date) {
+    Date intoDate;
+    try {
+      intoDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+    } catch (java.text.ParseException e) {
+      throw new RuntimeException("Invalid date " + e.getMessage());
+    }
+    return intoDate;
+  }
+
   /**
    * The method helps in adding tenant to a particular unit in a building.
    *
@@ -283,8 +306,9 @@ public class propertyImpl implements property {
    * @param tenantPassword the password of the tenant
    */
   @Override
-  public void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword) {
+  public void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword, String dob, String occupation, String phno) {
     String sql_string = "call propertyproject.add_tenant_to_unit(?,?,?,?)";
+
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
@@ -292,6 +316,9 @@ public class propertyImpl implements property {
       ps.setString(2,buildingName);
       ps.setInt(3,unitNo);
       ps.setString(4,tenantPassword);
+      ps.setDate(5, new java.sql.Date(getDateFromString(dob).getTime()));
+      ps.setString(6, occupation);
+      ps.setString(7, phno);
       ps.executeQuery();
     }catch(Exception e){
       throw new RuntimeException("Cannot add tenant to unit!!");
@@ -325,7 +352,6 @@ public class propertyImpl implements property {
    * address etc..
    *
    * @param companyName      the name of the company to which the building has to be attached to
-   * @param amenities        the amenities description of the building
    * @param address          the address of the building as a string
    * @param buildingName     the name of the building to be created
    * @param zipcode          the zipcode to which the building has to be attached
@@ -334,19 +360,18 @@ public class propertyImpl implements property {
    * @param type             the type of the building
    */
   @Override
-  public void createBuilding(String companyName, String amenities, String address, String buildingName, String zipcode, String noOfFloors, String noOfParkingSpots, String type) {
+  public void createBuilding(String companyName, String address, String buildingName, String zipcode, String noOfFloors, String noOfParkingSpots, String type) {
     String sql_string = "call propertyproject.create_building(?,?,?,?,?,?,?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
       ps.setString(1,companyName);
-      ps.setString(2,amenities);
-      ps.setString(3,address);
-      ps.setString(4,buildingName);
-      ps.setString(5,zipcode);
+      ps.setString(2,address);
+      ps.setString(3,buildingName);
+      ps.setString(4,zipcode);
       ps.setString(5,noOfFloors);
-      ps.setString(5,noOfParkingSpots);
-      ps.setString(5,type);
+      ps.setString(6,noOfParkingSpots);
+      ps.setString(7,type);
       ps.executeQuery();
     }catch(Exception e){
       throw new RuntimeException("Cannot create building!!");
@@ -401,6 +426,46 @@ public class propertyImpl implements property {
       ps.executeQuery();
     }catch(Exception e){
       throw new RuntimeException("Cannot add unit to building!!");
+    }
+  }
+
+  /**
+   * The method returns the list of amenities that are available in the database.
+   *
+   * @return the list of amenities
+   */
+  @Override
+  public List<String> getAmenities() {
+    String sql_string = "call propertyproject.get_amenities()";
+    try{
+      List<String> amenities = new ArrayList<>();
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ResultSet rs = ps.executeQuery();
+      while(rs.next()){
+        amenities.add(rs.getString("amenity"));
+      }
+      return amenities;
+    }catch(Exception e){
+      throw new RuntimeException("Cannot get amenities!!");
+    }
+  }
+
+  /**
+   * @param buildingName
+   * @param amenity
+   */
+  @Override
+  public void addAmenity(String buildingName, String amenity) {
+    String sql_string = "call propertyproject.add_amenity(?,?)";
+    try{
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ps.setString(1,buildingName);
+      ps.setString(2,amenity);
+      ps.executeQuery();
+    }catch(Exception e){
+      throw new RuntimeException("Cannot add amenity to building!!");
     }
   }
 }
