@@ -29,7 +29,7 @@ CREATE TABLE management_company(
 
 CREATE TABLE amenity(
 aid int not null unique,
-description varchar(100) not null);
+description varchar(100) not null unique);
 
 
 -- Units in a Building Table
@@ -67,7 +67,6 @@ mid INT PRIMARY KEY,
 mname VARCHAR(50) NOT NULL,
 bid INT NOT NULL,
 phone_number VARCHAR(10) NOT NULL,
-type_of_personnel varchar(10) NOT NULL,
 CONSTRAINT building_has_personnel FOREIGN KEY (bid) REFERENCES building(bid)
 	ON UPDATE CASCADE ON DELETE CASCADE);
 
@@ -84,9 +83,12 @@ CONSTRAINT a_with_table FOREIGN KEY (aid) REFERENCES amenity(aid)
 
 -- Units Leased to Tenants
 CREATE TABLE isleased(
+bid int not null,
 lid int not null,
 unit_no int not null,
 tid int not null,
+CONSTRAINT bd_with_table FOREIGN KEY (bid) REFERENCES building(bid)
+	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT lease_with_table FOREIGN KEY (lid) REFERENCES lease(lid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT unit_with_table FOREIGN KEY (unit_no) REFERENCES unit(unit_no)
@@ -99,17 +101,14 @@ CONSTRAINT tenant_with_table FOREIGN KEY (tid) REFERENCES tenant(tid)
 CREATE TABLE request(
 building_id INT not null,
 unit_no int not null,
-tid int not null,
 mid INT not null,
-r_description VARCHAR(50) not null,
+r_description VARCHAR(200) not null,
 r_status BOOLEAN not null DEFAULT FALSE,
 CONSTRAINT Building_with_table FOREIGN KEY (building_id) REFERENCES building(bid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT M_with_table FOREIGN KEY (mid) REFERENCES m_personnel(mid)
 	ON UPDATE CASCADE ON DELETE RESTRICT,
 CONSTRAINT u_table FOREIGN KEY (unit_no) REFERENCES unit(unit_no)
-	ON UPDATE CASCADE ON DELETE RESTRICT,
-CONSTRAINT t_with_table FOREIGN KEY (tid) REFERENCES tenant(tid)
 	ON UPDATE CASCADE ON DELETE RESTRICT );
 
 
