@@ -101,7 +101,18 @@ public interface property {
    * @param unitNo the number of the unit
    * @param tenantPassword the password of the tenant
    */
-  void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword);
+  /**
+   * The method helps in adding tenant to a particular unit in a building.
+   *
+   * @param tenantName the name of the tenant to be added
+   * @param buildingName the name of the building
+   * @param unitNo the number of the unit
+   * @param tenantPassword the password of the tenant
+   * @param dob date of birth of the tenant
+   * @param occupation the occupation of the tenant
+   * @param phno the phone number of the tenant
+   */
+  void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword, String dob, String occupation, String phno);
 
   /**
    * The method helps create a company in the database.
@@ -124,7 +135,7 @@ public interface property {
    * @param noOfParkingSpots the number of parking spots in the building
    * @param type the type of the building
    */
-  void createBuilding(String companyName, String amenities, String address, String buildingName,
+  void createBuilding(String companyName, String address, String buildingName,
                       String zipcode, String noOfFloors, String noOfParkingSpots, String type);
 
   /**
@@ -146,4 +157,18 @@ public interface property {
    * @param area the area measurement of the unit
    */
   void addUnits(String buildingName, int noOfBedrooms, int noOfBathrooms, Double price, Double area);
+
+  /**
+   * The method returns the list of amenities that are available in the database.
+   *
+   * @return the list of amenities
+   */
+  List<String> getAmenities();
+
+  /**
+   *
+   * @param buildingName
+   */
+  void addAmenity(String buildingName, String amenity);
+
 }
