@@ -155,7 +155,7 @@ public interface property {
    * @param price the price of the unit
    * @param area the area measurement of the unit
    */
-  void addUnits(String buildingName, int noOfBedrooms, int noOfBathrooms, Double price, Double area);
+  void addUnits(String buildingName, int noOfBedrooms, int noOfBathrooms, Double price, Double area, int unitNo);
 
   /**
    * The method returns the list of amenities that are available in the database.

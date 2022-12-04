@@ -413,7 +413,7 @@ public class propertyImpl implements property {
    * @param area          the area measurement of the unit
    */
   @Override
-  public void addUnits(String buildingName, int noOfBedrooms, int noOfBathrooms, Double price, Double area) {
+  public void addUnits(String buildingName, int noOfBedrooms, int noOfBathrooms, Double price, Double area, int unitNo) {
     String sql_string = "call propertyproject.add_unit(?,?,?,?,?)";
     try{
       this.getConnection();
@@ -423,6 +423,7 @@ public class propertyImpl implements property {
       ps.setInt(3,noOfBathrooms);
       ps.setDouble(4,price);
       ps.setDouble(5,area);
+      ps.setInt(6, unitNo);
       ps.executeQuery();
     }catch(Exception e){
       throw new RuntimeException("Cannot add unit to building!!");
@@ -451,6 +452,12 @@ public class propertyImpl implements property {
     }
   }
 
+  /**
+   * The method helps add amenities to the building
+   *
+   * @param buildingName the name of the building to which the amenity should be added
+   * @param amenity the amenity to be added
+   */
   @Override
   public void addAmenity(String buildingName, String amenity) {
     String sql_string = "call propertyproject.add_amenity(?,?)";
