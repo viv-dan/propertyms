@@ -471,4 +471,28 @@ public class propertyImpl implements property {
       throw new RuntimeException("Cannot add amenity to building!!");
     }
   }
+
+  /**
+   * The method helps getting all the building names managed by a particular building.
+   *
+   * @param companyName the name of the company
+   * @return the list of building names managed by the company
+   */
+  @Override
+  public List<String> loadCompanyBuildings(String companyName) {
+    String sql_string = "call propertyproject.get_company_buildings(?)";
+    try{
+      List<String> buildings = new ArrayList<>();
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ps.setString(1, companyName);
+      ResultSet rs = ps.executeQuery();
+      while(rs.next()){
+        buildings.add(rs.getString(1));
+      }
+      return buildings;
+    }catch(Exception e){
+      throw new RuntimeException("Cannot get all the buildings managed by the company!!");
+    }
+  }
 }

@@ -172,4 +172,12 @@ public interface property {
    */
   void addAmenity(String buildingName, String amenity);
 
+  /**
+   * The method helps getting all the building names managed by a particular building.
+   *
+   * @param companyName the name of the company
+   * @return the list of building names managed by the company
+   */
+  List<String> loadCompanyBuildings(String companyName);
+
 }
