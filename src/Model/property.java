@@ -127,7 +127,6 @@ public interface property {
    * address etc..
    *
    * @param companyName the name of the company to which the building has to be attached to
-   * @param amenities the amenities description of the building
    * @param address the address of the building as a string
    * @param buildingName the name of the building to be created
    * @param zipcode the zipcode to which the building has to be attached
@@ -166,8 +165,10 @@ public interface property {
   List<String> getAmenities();
 
   /**
+   * The method helps add amenities to the building
    *
-   * @param buildingName
+   * @param buildingName the name of the building to which the amenity should be added
+   * @param amenity the amenity to be added
    */
   void addAmenity(String buildingName, String amenity);
 

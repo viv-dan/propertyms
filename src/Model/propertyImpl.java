@@ -451,10 +451,6 @@ public class propertyImpl implements property {
     }
   }
 
-  /**
-   * @param buildingName
-   * @param amenity
-   */
   @Override
   public void addAmenity(String buildingName, String amenity) {
     String sql_string = "call propertyproject.add_amenity(?,?)";
