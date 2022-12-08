@@ -16,7 +16,7 @@ public class propertyImpl implements property {
 
   private final String url = "jdbc:mysql://localhost:3306/mysql";
   private final String username = "root";
-  private final String password = "bostonA6#";
+  private final String password = "Rushikesh";
   private static Connection con;
 
   private Connection getConnection() {
