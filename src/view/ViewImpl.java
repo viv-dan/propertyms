@@ -158,9 +158,10 @@ public class ViewImpl implements View{
           out.println("Enter the name of the building you want to add units to");
           String bName;
           bName=sc.nextLine();
+          list.add("");
           list.add(bName);
           try{
-            this.addUnitHelper(list);
+            this.addUnitHelper(list,name);
           }catch (Exception e){
             this.showErrorMessage("Building doesn't exist");
             this.goBackMessage();
@@ -310,15 +311,15 @@ public class ViewImpl implements View{
     try{
       c.createNewBuilding(name,l);
       this.showMessage("Building Created Successfully");
-      out.println("Enter the unit details of in the building");
-      addUnitHelper(l);
+      out.println("Create units in the building");
+      addUnitHelper(l,name);
     }catch (Exception e){
       this.goBackMessage();
       return;
     }
 
   }
-  private void addUnitHelper(List<String> l){
+  private void addUnitHelper(List<String> l,String name){
     try {
       char ch;
       int unitNo;
@@ -337,7 +338,7 @@ public class ViewImpl implements View{
         price=Double.parseDouble(sc.next().trim());
         out.println("Enter the square feet area of the unit");
         area=Double.parseDouble(sc.next().trim());
-        c.addUnitToBuilding(l.get(0),unitNo,noOfBedrooms,noOfBathroom,price,area);
+        c.addUnitToBuilding(l.get(1),unitNo,noOfBedrooms,noOfBathroom,price,area,name);
         this.successMessage();
         out.println("To add more units enter Y");
         ch=sc.next().charAt(0);
@@ -560,8 +561,12 @@ public class ViewImpl implements View{
 
   @Override
   public void showMaintenancePersonnel(Map<String, String> maintenancePersonnel) {
-    for (String name:maintenancePersonnel.keySet() ) {
-      out.println("Name: "+name+" Phone Number: "+maintenancePersonnel.get(name));
+    if(maintenancePersonnel.size()==0){
+      this.showMessage("No Maintenance Personnel added yet to the building.");
+    }else{
+      for (String name:maintenancePersonnel.keySet() ) {
+        out.println("Name: "+name+" Phone Number: "+maintenancePersonnel.get(name));
+      }
     }
     this.goBackMessage();
   }

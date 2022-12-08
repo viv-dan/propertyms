@@ -6,6 +6,10 @@ import java.util.Map;
 import Model.property;
 import view.View;
 
+/**
+ * The class depicts a controller for the program.
+ * The class implements the features of the application.
+ */
 public class ControllerImpl implements ControllerFeatures{
 
   private property model;
@@ -30,6 +34,10 @@ public class ControllerImpl implements ControllerFeatures{
     try{
       Map<String,String> info;
       info=model.getParticularBuildingInfo(buildingName);
+      if(info.size()==0){
+        v.showMessage("No building is present with that name.");
+        return;
+      }
       if(info.get("amenities")==null){
         v.showMessage("No amenities are associated with the building");
       }
@@ -86,12 +94,12 @@ public class ControllerImpl implements ControllerFeatures{
     try{
       List<String> l =model.getLeaseInfo(username);
       if(l.isEmpty() || l==null){
-        v.showMessage("Invalid input");
+        v.showMessage("Can't get lease information.");
         return;
       }
-      v.showMessage("Unit Number Associated"+l.get(0));
-      v.showMessage("Start Date of the Lease"+l.get(1));
-      v.showMessage("End date of the Lease"+l.get(2));
+      v.showMessage("Unit Number Associated "+l.get(0));
+      v.showMessage("Start Date of the Lease "+l.get(1));
+      v.showMessage("End date of the Lease "+l.get(2));
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
     }
@@ -137,8 +145,22 @@ public class ControllerImpl implements ControllerFeatures{
   }
 
   @Override
-  public void addUnitToBuilding(String s, int unitNo, int noOfBedrooms,int noOfBathroom, double price, double value) {
-    model.addUnits(s,noOfBedrooms,noOfBathroom,price,value,unitNo);
+  public void addUnitToBuilding(String s, int unitNo, int noOfBedrooms,
+                                int noOfBathroom, double price,
+                                double value,String companyName) {
+    try {
+      List<String> b;
+      b=model.loadCompanyBuildings(companyName);
+      if(b.contains(s)){
+        model.addUnits(s,noOfBedrooms,noOfBathroom,price,value,unitNo);
+      }
+      else {
+        throw new RuntimeException("Invalid Building for a company");
+      }
+    }catch (Exception e){
+      v.showErrorMessage(e.getMessage());
+    }
+
   }
 
   @Override
