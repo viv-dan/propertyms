@@ -93,8 +93,8 @@ public class ViewImpl implements View{
             List<String> l2=new ArrayList<>();
             l2.add(companyDetail.get("username"));
             l2.add(companyDetail.get("password"));
-            out.println("Welcome Company");
             c.companyLogin(companyDetail.get("username"),companyDetail.get("password"));
+            out.println("Welcome Company");
             this.handleCompany(l2);
             break;
           case 3:
@@ -411,6 +411,7 @@ public class ViewImpl implements View{
           out.println("Enter your unit number");
           unitNo=sc.nextLine();
           c.showMaintenanceRequest(bName,unitNo);
+          this.goBackMessage();
           break;
         case 2:
           //display active requests
@@ -424,6 +425,7 @@ public class ViewImpl implements View{
           requestDetails=this.createMaintenanceRequestForm();
           //controller create request;
           c.createMaintenanceRequest(requestDetails.get(0),requestDetails.get(1),requestDetails.get(2));
+          this.goBackMessage();
           break;
         default:
           this.showInputError();
@@ -573,6 +575,19 @@ public class ViewImpl implements View{
       for (String s:amenities ) {
         out.println(s);
       }
+    }
+  }
+
+  @Override
+  public void showRequestInformation(List<String> request) {
+    for (String s:request ) {
+      out.println("The description of the request: "+s.split(" - ")[0]);
+      if(s.split(" - ")[1].equals("0")){
+        out.println("The status of the request:Open");
+      }else {
+        out.println("The status of the request:Serviced and Closed");
+      }
+
     }
   }
 

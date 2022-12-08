@@ -39,4 +39,6 @@ public interface View {
   void showMaintenancePersonnel(Map<String, String> maintenancePersonnel);
 
   void showAmenity(List<String> amenities);
+
+  void showRequestInformation(List<String> request);
 }

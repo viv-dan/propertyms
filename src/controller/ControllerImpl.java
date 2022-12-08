@@ -50,12 +50,18 @@ public class ControllerImpl implements ControllerFeatures{
 
   @Override
   public void companyLogin(String username, String password) {
-    model.validateCompany(username,password);
+    int cid=model.validateCompany(username,password);
+    if(cid==0){
+      throw new RuntimeException("Invalid Credentials");
+    }
   }
 
   @Override
   public void TenantLogin(String username, String password) {
-    model.validateTenant(username,password);
+    int tid=model.validateTenant(username,password);
+    if(tid==0){
+      throw new RuntimeException("Invalid Credentials");
+    }
   }
 
   @Override
@@ -79,6 +85,10 @@ public class ControllerImpl implements ControllerFeatures{
   public void getLeaseInfo(String username) {
     try{
       List<String> l =model.getLeaseInfo(username);
+      if(l.isEmpty() || l==null){
+        v.showMessage("Invalid input");
+        return;
+      }
       v.showMessage("Unit Number Associated"+l.get(0));
       v.showMessage("Start Date of the Lease"+l.get(1));
       v.showMessage("End date of the Lease"+l.get(2));
@@ -115,8 +125,12 @@ public class ControllerImpl implements ControllerFeatures{
         return;
       }
       List<String> request=model.getMaintenanceRequests(bName,unit);
+      if(request.isEmpty() || request==null){
+        v.showMessage("No request found");
+        return;
+      }
       v.showMessage("The request corresponding status shown below");
-      v.showListOfBuildings(request);
+      v.showRequestInformation(request);
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
     }
