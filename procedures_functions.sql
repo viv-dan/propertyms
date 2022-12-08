@@ -20,6 +20,23 @@ DELIMITER ;
 
 DELIMITER //
 
+create function get_tenant_building(tenant_name VARCHAR(100))
+RETURNS VARCHAR(100)
+DETERMINISTIC READS SQL DATA
+BEGIN
+DECLARE tenant_id INT;
+DECLARE buildingid INT;
+DECLARE buildingName VARCHAR(100);
+SELECT tid into tenant_id from tenant t where t.tname = tenant_name;
+SELECT bid into buildingid from isleased where tid=tenant_id;
+SELECT building_name into buildingName from building where bid = buildingid;
+RETURN(buildingName);
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
 create function validate_tenant(tenant_name VARCHAR(100), tenant_password VARCHAR(100))
 RETURNS INT
 DETERMINISTIC READS SQL DATA

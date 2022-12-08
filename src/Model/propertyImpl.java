@@ -16,7 +16,7 @@ public class propertyImpl implements property {
 
   private final String url = "jdbc:mysql://localhost:3306/mysql";
   private final String username = "root";
-  private final String password = "Rushikesh";
+  private final String password = "bostonA6#";
   private static Connection con;
 
   private Connection getConnection() {
@@ -51,7 +51,6 @@ public class propertyImpl implements property {
       }
       return 0;
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot validate tenant!!");
     }
   }
@@ -123,7 +122,6 @@ public class propertyImpl implements property {
         buildingInfo.put("amenities", rs.getString("amenities"));
       }
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get info about the building!!");
     }
     sql_string = "call propertyproject.get_building_available_units(?)";
@@ -137,7 +135,6 @@ public class propertyImpl implements property {
       }
       return buildingInfo;
     }catch(Exception e){
-      System.out.println(e.getMessage()+1);
       throw new RuntimeException("Cannot get info about the building!!");
     }
   }
@@ -160,7 +157,6 @@ public class propertyImpl implements property {
       ps.setString(3, desc);
       ps.executeQuery();
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot create maintenance request!!");
     }
   }
@@ -189,7 +185,6 @@ public class propertyImpl implements property {
       }
       return requests;
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get maintenance requests!!");
     }
   }
@@ -237,7 +232,6 @@ public class propertyImpl implements property {
       ps.setString(3, phoneNo);
       ps.executeQuery();
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot add maintenance personnel!!");
     }
   }
@@ -262,10 +256,11 @@ public class propertyImpl implements property {
       }
       return personnel;
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get maintenance personnel!!");
     }
   }
+
+
 
   /**
    * The method returns information about the lease of a particular tenant.
@@ -289,7 +284,6 @@ public class propertyImpl implements property {
       }
       return requests;
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get lease info!!");
     }
   }
@@ -328,7 +322,6 @@ public class propertyImpl implements property {
       ps.setString(7, phno);
       ps.executeQuery();
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot add tenant to unit!!");
     }
   }
@@ -382,7 +375,6 @@ public class propertyImpl implements property {
       ps.setString(7,type);
       ps.executeQuery();
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot create building!!");
     }
   }
@@ -435,7 +427,9 @@ public class propertyImpl implements property {
       ps.setInt(6, unitNo);
       ps.executeQuery();
     }catch(Exception e){
-      System.out.println(e.getMessage());
+      if(e.getMessage().equals("Duplicate entry")){
+        throw new RuntimeException("Unit already present.");
+      }
       throw new RuntimeException("Cannot add unit to building!!");
     }
   }
@@ -458,7 +452,6 @@ public class propertyImpl implements property {
       }
       return amenities;
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get amenities!!");
     }
   }
@@ -479,7 +472,6 @@ public class propertyImpl implements property {
       ps.setString(2,amenity);
       ps.executeQuery();
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot add amenity to building!!");
     }
   }
@@ -505,6 +497,29 @@ public class propertyImpl implements property {
       return buildings;
     }catch(Exception e){
       throw new RuntimeException("Cannot get all the buildings managed by the company!!");
+    }
+  }
+
+  /**
+   * The method returns the name of the building the tenant is associated with.
+   *
+   * @param tenantName the name of the tenant for which the building name has to be returned
+   * @return the name of the building
+   */
+  @Override
+  public String getTenantBuilding(String tenantName) {
+    String sql_string = "SELECT propertyproject.get_tenant_building(?)";
+    try{
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ps.setString(1,tenantName);
+      ResultSet rs = ps.executeQuery();
+      if(rs.next()) {
+        return rs.getString(1);
+      }
+      return "";
+    }catch(Exception e){
+      throw new RuntimeException("Cannot get tenant's building!!");
     }
   }
 }

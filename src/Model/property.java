@@ -180,4 +180,12 @@ public interface property {
    */
   List<String> loadCompanyBuildings(String companyName);
 
+  /**
+   * The method returns the name of the building the tenant is associated with.
+   *
+   * @param tenantName the name of the tenant for which the building name has to be returned
+   * @return the name of the building
+   */
+  String getTenantBuilding(String tenantName);
+
 }
