@@ -38,7 +38,7 @@ public class propertyImpl implements property {
    * @return true if login details are verified. False otherwise
    */
   @Override
-  public boolean validateTenant(String username, String password) {
+  public int validateTenant(String username, String password) {
     String sql_string = "SELECT propertyproject.validate_tenant(?,?)";
     try{
       this.getConnection();
@@ -47,9 +47,9 @@ public class propertyImpl implements property {
       ps.setString(2,password);
       ResultSet rs = ps.executeQuery();
       if(rs.next()) {
-        return rs.getBoolean(1);
+        return rs.getInt(1);
       }
-      return false;
+      return 0;
     }catch(Exception e){
       System.out.println(e.getMessage());
       throw new RuntimeException("Cannot validate tenant!!");
@@ -64,7 +64,7 @@ public class propertyImpl implements property {
    * @return true if login details are verified. False otherwise
    */
   @Override
-  public boolean validateCompany(String username, String password) {
+  public int validateCompany(String username, String password) {
     String sql_string = "SELECT propertyproject.validate_company(?,?)";
     try{
       this.getConnection();
@@ -73,9 +73,9 @@ public class propertyImpl implements property {
       ps.setString(2,password);
       ResultSet rs = ps.executeQuery();
       if(rs.next()) {
-        return rs.getBoolean(1);
+        return rs.getInt(1);
       }
-      return false;
+      return 0;
     }catch(Exception e){
       throw new RuntimeException("Cannot validate company!!");
     }
@@ -123,6 +123,7 @@ public class propertyImpl implements property {
         buildingInfo.put("amenities", rs.getString("amenities"));
       }
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get info about the building!!");
     }
     sql_string = "call propertyproject.get_building_available_units(?)";
@@ -136,6 +137,7 @@ public class propertyImpl implements property {
       }
       return buildingInfo;
     }catch(Exception e){
+      System.out.println(e.getMessage()+1);
       throw new RuntimeException("Cannot get info about the building!!");
     }
   }
@@ -158,6 +160,7 @@ public class propertyImpl implements property {
       ps.setString(3, desc);
       ps.executeQuery();
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot create maintenance request!!");
     }
   }
@@ -186,6 +189,7 @@ public class propertyImpl implements property {
       }
       return requests;
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get maintenance requests!!");
     }
   }
@@ -233,6 +237,7 @@ public class propertyImpl implements property {
       ps.setString(3, phoneNo);
       ps.executeQuery();
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot add maintenance personnel!!");
     }
   }
@@ -253,10 +258,11 @@ public class propertyImpl implements property {
       ps.setString(1, buildingName);
       ResultSet rs = ps.executeQuery();
       while(rs.next()){
-        personnel.put(rs.getString("name"), rs.getString("number"));
+        personnel.put(rs.getString("mname"), rs.getString("phone_number"));
       }
       return personnel;
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get maintenance personnel!!");
     }
   }
@@ -277,12 +283,13 @@ public class propertyImpl implements property {
       ps.setString(1, tenantName);
       ResultSet rs = ps.executeQuery();
       while(rs.next()){
-        requests.add(rs.getString("unit"));
-        requests.add(rs.getString("start date"));
-        requests.add(rs.getString("end date"));
+        requests.add(rs.getString("unit_no"));
+        requests.add(rs.getString("start_date"));
+        requests.add(rs.getString("end_date"));
       }
       return requests;
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get lease info!!");
     }
   }
@@ -307,7 +314,7 @@ public class propertyImpl implements property {
    */
   @Override
   public void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword, String dob, String occupation, String phno) {
-    String sql_string = "call propertyproject.add_tenant_to_unit(?,?,?,?)";
+    String sql_string = "call propertyproject.add_tenant_to_unit(?,?,?,?,?,?,?)";
 
     try{
       this.getConnection();
@@ -321,6 +328,7 @@ public class propertyImpl implements property {
       ps.setString(7, phno);
       ps.executeQuery();
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot add tenant to unit!!");
     }
   }
@@ -360,8 +368,8 @@ public class propertyImpl implements property {
    * @param type             the type of the building
    */
   @Override
-  public void createBuilding(String companyName, String address, String buildingName, String zipcode, String noOfFloors, String noOfParkingSpots, String type) {
-    String sql_string = "call propertyproject.create_building(?,?,?,?,?,?,?,?)";
+  public void createBuilding(String companyName, String address, String buildingName, String zipcode, int noOfFloors, int noOfParkingSpots, String type) {
+    String sql_string = "call propertyproject.create_building(?,?,?,?,?,?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
@@ -369,11 +377,12 @@ public class propertyImpl implements property {
       ps.setString(2,address);
       ps.setString(3,buildingName);
       ps.setString(4,zipcode);
-      ps.setString(5,noOfFloors);
-      ps.setString(6,noOfParkingSpots);
+      ps.setInt(5,noOfFloors);
+      ps.setInt(6,noOfParkingSpots);
       ps.setString(7,type);
       ps.executeQuery();
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot create building!!");
     }
   }
@@ -414,7 +423,7 @@ public class propertyImpl implements property {
    */
   @Override
   public void addUnits(String buildingName, int noOfBedrooms, int noOfBathrooms, Double price, Double area, int unitNo) {
-    String sql_string = "call propertyproject.add_unit(?,?,?,?,?)";
+    String sql_string = "call propertyproject.add_unit(?,?,?,?,?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
@@ -426,6 +435,7 @@ public class propertyImpl implements property {
       ps.setInt(6, unitNo);
       ps.executeQuery();
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot add unit to building!!");
     }
   }
@@ -444,10 +454,11 @@ public class propertyImpl implements property {
       PreparedStatement ps = con.prepareStatement(sql_string);
       ResultSet rs = ps.executeQuery();
       while(rs.next()){
-        amenities.add(rs.getString("amenity"));
+        amenities.add(rs.getString("description"));
       }
       return amenities;
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get amenities!!");
     }
   }
@@ -468,6 +479,7 @@ public class propertyImpl implements property {
       ps.setString(2,amenity);
       ps.executeQuery();
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot add amenity to building!!");
     }
   }

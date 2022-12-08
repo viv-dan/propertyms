@@ -6,22 +6,22 @@ import java.util.Map;
 public interface property {
 
   /**
-   * The method validates the tenant login details.
+   * The method validates the tenant login details and returns the tenant id..
    *
    * @param username the username of the tenant
    * @param password the password of the tenant
-   * @return true if login details are verified. False otherwise
+   * @return the tenant id in the database
    */
-  boolean validateTenant(String username, String password);
+  int validateTenant(String username, String password);
 
   /**
-   * The method validates the company login details.
+   * The method validates the company login details and returns the company id.
    *
    * @param username the username of the company
    * @param password the password of the company
-   * @return true if login details are verified. False otherwise
+   * @return the company id in the database
    */
-  boolean validateCompany(String username, String password);
+  int validateCompany(String username, String password);
 
   /**
    * The method returns the list of all the available building names that are present.
@@ -135,7 +135,7 @@ public interface property {
    * @param type the type of the building
    */
   void createBuilding(String companyName, String address, String buildingName,
-                      String zipcode, String noOfFloors, String noOfParkingSpots, String type);
+                      String zipcode, int noOfFloors, int noOfParkingSpots, String type);
 
   /**
    * The method returns the tenant of a particular unit in the building.
