@@ -41,4 +41,6 @@ public interface View {
   void showAmenity(List<String> amenities);
 
   void showRequestInformation(List<String> request);
+
+  void showBuildingMetaData(Map<String, String> buildingMetadata, String buildingName);
 }

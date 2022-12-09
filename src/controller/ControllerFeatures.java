@@ -60,4 +60,12 @@ public interface ControllerFeatures {
   void showBuildingAndAvailableUnit(String name);
 
   void showCompanyTenantInformation(String tenantName, String companyName);
+
+  List<String> showActiveRequest(String buildingName, String unitNo, String companyName);
+
+  void updateRequest(String desc, String buildingName, String unitNo);
+
+  void deleteBuilding(String companyName, String buildingName);
+
+  void getBuildingMetaDate(String companyName, String buildingName);
 }

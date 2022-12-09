@@ -246,11 +246,12 @@ public class ControllerImpl implements ControllerFeatures{
   public void addAmenity(String bName, String amenity,String companyName) {
     try{
       if(checkBuildingOfCompany(companyName,bName)){
+        model.addAmenity(bName,amenity);
+        v.successMessage();
+      }else{
         v.showMessage("Building not associated with company");
         return;
       }
-      model.addAmenity(bName,amenity);
-      v.successMessage();
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
     }
@@ -308,6 +309,59 @@ public class ControllerImpl implements ControllerFeatures{
       }
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
+    }
+  }
+
+  @Override
+  public List<String> showActiveRequest(String buildingName, String unitNo, String companyName) {
+    try{
+      if(checkBuildingOfCompany(companyName,buildingName)){
+        int unit;
+        unit=Integer.parseInt(unitNo);
+        List<String>l = model.getMaintenanceRequests(buildingName,unit);
+        return l;
+      }else {
+        throw new RuntimeException("Building not associated with company");
+      }
+    }catch (NumberFormatException e){
+      throw new RuntimeException("Invalid unit number");
+    }
+    catch (Exception e){
+      throw e;
+    }
+  }
+
+  @Override
+  public void updateRequest(String desc, String buildingName, String unitNo) {
+    model.updateRequestStatus(desc,buildingName,Integer.parseInt(unitNo));
+  }
+
+  @Override
+  public void deleteBuilding(String companyName, String buildingName) {
+    try{
+      if(checkBuildingOfCompany(companyName,buildingName)){
+        model.deleteBuilding(buildingName);
+        v.successMessage();
+      }else {
+        v.showErrorMessage("Building not associated with the company");
+      }
+    }catch (Exception e){
+      v.showErrorMessage(e.getMessage());
+    }
+  }
+
+  @Override
+  public void getBuildingMetaDate(String companyName, String buildingName) {
+    try{
+      if(checkBuildingOfCompany(companyName,buildingName)){
+        v.showBuildingMetaData(model.getBuildingMetadata(buildingName),buildingName);
+
+      }else {
+        v.showErrorMessage("Building not associated with the company");
+      }
+
+    }catch (Exception e){
+
     }
   }
 

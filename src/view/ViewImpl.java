@@ -137,7 +137,7 @@ public class ViewImpl implements View{
     name=companyDetail.get(0);
     pass=companyDetail.get(1);
     a=0;
-    while(a!=10){
+    while(a!=13){
       this.companyMenu();
       try{
         a=Integer.parseInt(sc.nextLine().trim());
@@ -212,14 +212,64 @@ public class ViewImpl implements View{
           this.goBackMessage();
           break;
         case 10:
+          //show active requests and change it to close
+          this.handleChangingRequests(name);
+          this.goBackMessage();
+          break;
+        case 11:
+          // show meta-data of a building
+          String gt;
+          out.println("Enter name of the building");
+          c.getBuildingMetaDate(name,sc.nextLine());
+          this.goBackMessage();
+          break;
+        case 12:
+          //delete a building
+          out.println("Enter the name of the building to be deleted");
+          c.deleteBuilding(name,sc.nextLine());
+          this.goBackMessage();
+          break;
+        case 13:
           break;
         default:
           this.showInputError();
           this.goBackMessage();
-      }if(a==10){
+      }if(a==13){
         break;
       }
     }
+  }
+
+  private void handleChangingRequests(String name) {
+    String bName;
+    String unitNo;
+    out.println("Enter the name of the building");
+    bName=sc.nextLine();
+    out.println("Enter the unit number");
+    unitNo=sc.nextLine();
+    String desc;
+    desc=this.showActiveUnitRequest(c.showActiveRequest(bName,unitNo,name));
+    if(desc!=null){
+      c.updateRequest(desc,bName,unitNo);
+      this.successMessage();
+    }
+  }
+
+  private String showActiveUnitRequest(List<String> request) {
+    String desc;
+    char ch;
+    for (String s : request) {
+      if (s.split(" - ")[1].equals("0")) {
+        desc=s.split(" - ")[0];
+        out.println("The description of the request: " + desc);
+        out.println("Do you wish to delete this request(Y/N)");
+        ch=sc.next().charAt(0);
+        if(ch=='Y' || ch=='y'){
+          return desc;
+        }
+      }
+    }
+    return null;
   }
 
   private void showBuildingsUnits(String name) {
@@ -353,7 +403,6 @@ public class ViewImpl implements View{
         out.println("Enter the square feet area of the unit");
         area=Double.parseDouble(sc.next().trim());
         c.addUnitToBuilding(l.get(1),unitNo,noOfBedrooms,noOfBathroom,price,area,name);
-        this.successMessage();
         out.println("To add more units enter Y");
         ch=sc.next().charAt(0);
       }while (ch=='Y' || ch=='y');
@@ -411,8 +460,7 @@ public class ViewImpl implements View{
 
   private void handleTenantRequest(String name) {
     out.println("1.Show requests");
-    out.println("2.Delete Active Requests");
-    out.println("3.Create a new Request");
+    out.println("2.Create a new Request");
     int ch;
     try{
       ch = Integer.parseInt(sc.nextLine().trim());
@@ -423,13 +471,6 @@ public class ViewImpl implements View{
           this.goBackMessage();
           break;
         case 2:
-          //display active requests
-          out.println("Enter request ID to be deleted");
-          String id;
-          id=sc.nextLine();
-          //controller call
-          break;
-        case 3:
           out.println("Enter the description of your problem in 200 characters");
           String desc;
           desc=sc.nextLine();
@@ -514,7 +555,10 @@ public class ViewImpl implements View{
     out.println("7.Get Tenants of a particular unit in a building");
     out.println("8.Add amenity to a building");
     out.println("9.Show tenant lease information");
-    out.println("10.Logout");
+    out.println("10.Show active maintenance requests");
+    out.println("11.Show details about a building");
+    out.println("12.Delete a building");
+    out.println("13.Logout");
   }
 
 
@@ -600,8 +644,16 @@ public class ViewImpl implements View{
       }else {
         out.println("The status of the request:Serviced and Closed");
       }
-
     }
   }
 
+  @Override
+  public void showBuildingMetaData(Map<String, String> buildingMetadata, String buildingName) {
+    out.println("Building Name "+buildingName );
+    out.println("Address of the building: "+buildingMetadata.get("address"));
+    out.println("Zipcode: "+buildingMetadata.get("zipcode"));
+    out.println("Number of floors in the building: "+buildingMetadata.get("num_floors"));
+    out.println("Number of Parking Spots: "+buildingMetadata.get("parking_spots"));
+    out.println("Type of building: "+buildingMetadata.get("type"));
+  }
 }

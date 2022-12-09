@@ -156,6 +156,17 @@ DELIMITER ;
 
 DELIMITER //
 
+DELIMITER //
+
+create procedure get_building_metadata(IN buildingname VARCHAR(100))
+BEGIN
+select address, zipcode, number_of_floors, parking_spots, type_of_building from building where building_name = buildingname;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
 create procedure get_lease_info(IN tenantname VARCHAR(100))
 BEGIN
 DECLARE tenantid INT;
@@ -240,6 +251,26 @@ INSERT INTO building (building_name, zipcode, cid, address, number_of_floors, pa
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+create procedure delete_building(IN buildingName VARCHAR(100))
+BEGIN
+DELETE from building where building_name = buildingName;
+END//
+
+DELIMITER;
+
+DELIMITER //
+
+create procedure update_request_status(IN buidingName VARCHAR(100), IN descr VARCHAR(200), IN unit INT)
+BEGIN
+DECLARE buildingid INT;
+select bid INTO buildingid from building b where b.building_name = buidingName;
+update request SET r_status=1 where building_id = buildingid and unit_no = unit and r_description = descr;
+END//
+
+DELIMITER;
 
 DELIMITER //
 create procedure get_company_buildings(IN companyName VARCHAR(100))
