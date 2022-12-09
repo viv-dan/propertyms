@@ -188,4 +188,30 @@ public interface property {
    */
   String getTenantBuilding(String tenantName);
 
+  /**
+   * The method returns a particular building's metadata such as address, zipcode, number of floors,
+   * number of parking spots and the type of the building.
+   *
+   * @param buildingName the name of the building
+   * @return a map of keys as address, zipcode, num_floors, parking_spots, type and their
+   * corresponding values
+   */
+  Map<String, String> getBuildingMetadata(String buildingName);
+
+  /**
+   * This method deletes a company's building from the database.
+   *
+   * @param buildingName the name of the building to be deleted
+   */
+  void deleteBuilding(String buildingName);
+
+  /**
+   * The method helps update a maintenance request's status.
+   *
+   * @param desc the description of the request
+   * @param buildingName the name of the building
+   * @param unitNo the number of the unit
+   */
+  void updateRequestStatus(String desc, String buildingName, int unitNo);
+
 }

@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class propertyImpl implements property {
 
@@ -148,6 +150,9 @@ public class propertyImpl implements property {
    */
   @Override
   public void createMaintenanceRequest(String buildingName, int unitNo, String desc) {
+    if(buildingName==null || buildingName.trim().equals("") || desc==null || desc.trim().equals("")){
+      throw new RuntimeException("Invalid Input");
+    }
     String sql_string = "call propertyproject.create_maintenance_requests(?,?,?)";
     try{
       this.getConnection();
@@ -223,6 +228,9 @@ public class propertyImpl implements property {
    */
   @Override
   public void addMaintenancePersonnel(String buildingName, String personnelName, String phoneNo) {
+    if(buildingName==null || personnelName==null || phoneNo ==null || !isValid(phoneNo) || buildingName.trim().equals("") || personnelName.trim().equals("")){
+      throw new RuntimeException("Invalid Input");
+    }
     String sql_string = "call propertyproject.add_maintenance_personnel(?,?,?)";
     try{
       this.getConnection();
@@ -293,7 +301,7 @@ public class propertyImpl implements property {
     try {
       intoDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
     } catch (java.text.ParseException e) {
-      throw new RuntimeException("Invalid date " + e.getMessage());
+      throw new RuntimeException("Invalid date!!");
     }
     return intoDate;
   }
@@ -308,8 +316,13 @@ public class propertyImpl implements property {
    */
   @Override
   public void addTenantToUnit(String tenantName, String buildingName, int unitNo, String tenantPassword, String dob, String occupation, String phno) {
-    String sql_string = "call propertyproject.add_tenant_to_unit(?,?,?,?,?,?,?)";
 
+    if(tenantName==null || buildingName==null || tenantPassword ==null || dob==null || occupation==null || phno==null || tenantName.trim().equals("") || tenantPassword.trim().equals("") || buildingName.trim().equals("") || dob.trim().equals("") || occupation
+            .trim().equals("") || !isValid(phno)){
+      throw new RuntimeException("Invalid Inputs");
+    }
+    Date d = getDateFromString(dob);
+    String sql_string = "call propertyproject.add_tenant_to_unit(?,?,?,?,?,?,?)";
     try{
       this.getConnection();
       PreparedStatement ps = con.prepareStatement(sql_string);
@@ -334,6 +347,9 @@ public class propertyImpl implements property {
    */
   @Override
   public void createCompany(String companyName, String companyPassword, String email, String phno) {
+    if(companyName==null || companyPassword==null || email==null || phno==null || companyName.trim().equals("") || companyPassword.trim().equals("") || email.trim().equals("") || phno.trim().equals("") || !isValid(phno)){
+      throw new RuntimeException("Invalid Inputs!!");
+    }
     String sql_string = "call propertyproject.add_company(?,?,?,?)";
     try{
       this.getConnection();
@@ -362,6 +378,9 @@ public class propertyImpl implements property {
    */
   @Override
   public void createBuilding(String companyName, String address, String buildingName, String zipcode, int noOfFloors, int noOfParkingSpots, String type) {
+    if(buildingName==null || address==null || companyName==null || zipcode==null|| type==null ||buildingName.trim().equals("") || address.trim().equals("") || companyName.trim().equals("") || zipcode.trim().equals("") || type.trim().equals("")){
+      throw new RuntimeException("Invalid Inputs!!");
+    }
     String sql_string = "call propertyproject.create_building(?,?,?,?,?,?,?)";
     try{
       this.getConnection();
@@ -415,6 +434,9 @@ public class propertyImpl implements property {
    */
   @Override
   public void addUnits(String buildingName, int noOfBedrooms, int noOfBathrooms, Double price, Double area, int unitNo) {
+    if(buildingName==null || price==null || area==null || buildingName.trim().equals("")){
+      throw new RuntimeException("Invalid Inputs!!");
+    }
     String sql_string = "call propertyproject.add_unit(?,?,?,?,?,?)";
     try{
       this.getConnection();
@@ -464,6 +486,9 @@ public class propertyImpl implements property {
    */
   @Override
   public void addAmenity(String buildingName, String amenity) {
+    if(buildingName==null || amenity==null || buildingName.trim().equals("") || amenity.trim().equals("")){
+      throw new RuntimeException("Invalid Inputs!!");
+    }
     String sql_string = "call propertyproject.add_amenity(?,?)";
     try{
       this.getConnection();
@@ -521,5 +546,69 @@ public class propertyImpl implements property {
     }catch(Exception e){
       throw new RuntimeException("Cannot get tenant's building!!");
     }
+  }
+
+  /**
+   * The method returns a particular building's metadata such as address, zipcode, number of floors,
+   * number of parking spots and the type of the building.
+   *
+   * @param buildingName the name of the building
+   * @return a map of keys as address, zipcode, num_floors, parking_spots, type and their
+   * corresponding values
+   */
+  @Override
+  public Map<String, String> getBuildingMetadata(String buildingName) {
+    String sql_string = "call propertyproject.get_building_metadata(?)";
+    try{
+      Map<String, String> hm = new HashMap<>();
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ps.setString(1,buildingName);
+      ResultSet rs = ps.executeQuery();
+      if(rs.next()) {
+        hm.put("address", rs.getString(1));
+        hm.put("zipcode", rs.getString(2));
+        hm.put("num_floors",rs.getString(3));
+        hm.put("parking_spots",rs.getString(4));
+        hm.put("type",rs.getString(5));
+      }
+      return hm;
+    }catch(Exception e){
+      System.out.println(e.getMessage());
+      throw new RuntimeException("Cannot get building's metadata!!");
+    }
+  }
+
+  @Override
+  public void deleteBuilding(String buildingName){
+    String sql_string = "call propertyproject.delete_building(?)";
+    try{
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ps.setString(1,buildingName);
+      ps.executeQuery();
+    }catch(Exception e){
+      System.out.println(e.getMessage());
+      throw new RuntimeException("Cannot delete building from database!!");
+    }
+  }
+
+  /**
+   * The method helps update a maintenance request's status.
+   *
+   * @param desc         the description of the request
+   * @param buildingName the name of the building
+   * @param unitNo       the number of the unit
+   */
+  @Override
+  public void updateRequestStatus(String desc, String buildingName, int unitNo) {
+
+  }
+
+  private static boolean isValid(String s)
+  {
+    Pattern p = Pattern.compile("^\\d{10}$");
+    Matcher m = p.matcher(s);
+    return (m.matches());
   }
 }
