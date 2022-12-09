@@ -78,8 +78,14 @@ public class ControllerImpl implements ControllerFeatures{
       int floors,parking;
       floors= Integer.parseInt(formData.get(3));
       parking= Integer.parseInt(formData.get(4));
-      model.createBuilding(companyName,formData.get(0),formData.get(1),formData.get(2),
-              floors,parking,formData.get(5));
+      if(checkBuildingOfCompany(companyName, formData.get(1))){
+        throw new RuntimeException("The name of the building already exists.");
+      }
+      else{
+        model.createBuilding(companyName,formData.get(0),formData.get(1),formData.get(2),
+                floors,parking,formData.get(5));
+        v.showMessage("Building created successfully");
+      }
     }catch (NumberFormatException e){
       v.showErrorMessage("Invalid input");
     }
@@ -106,15 +112,13 @@ public class ControllerImpl implements ControllerFeatures{
   }
 
   @Override
-  public void createMaintenanceRequest(String bName, String unitNumber, String desc) {
+  public void createMaintenanceRequest(String tenantName, String desc) {
     try{
       int unit;
-      try{
-        unit = Integer.parseInt(unitNumber);
-      }catch (Exception e){
-        v.showErrorMessage("Invalid Unit Number");
-        return;
-      }
+      String bName;
+      bName= model.getTenantBuilding(tenantName);
+      List<String> l =model.getLeaseInfo(tenantName);
+      unit= Integer.parseInt(l.get(0));
       model.createMaintenanceRequest(bName,unit,desc);
       v.successMessage();
     }catch (Exception e){
@@ -123,15 +127,13 @@ public class ControllerImpl implements ControllerFeatures{
   }
 
   @Override
-  public void showMaintenanceRequest(String bName, String unitNo) {
+  public void showMaintenanceRequest(String tenantName) {
     try{
       int unit;
-      try{
-        unit = Integer.parseInt(unitNo);
-      }catch (Exception e){
-        v.showErrorMessage("Invalid Unit Number");
-        return;
-      }
+      String bName;
+      bName= model.getTenantBuilding(tenantName);
+      List<String> l =model.getLeaseInfo(tenantName);
+      unit= Integer.parseInt(l.get(0));
       List<String> request=model.getMaintenanceRequests(bName,unit);
       if(request.isEmpty() || request==null){
         v.showMessage("No request found");
@@ -149,9 +151,7 @@ public class ControllerImpl implements ControllerFeatures{
                                 int noOfBathroom, double price,
                                 double value,String companyName) {
     try {
-      List<String> b;
-      b=model.loadCompanyBuildings(companyName);
-      if(b.contains(s)){
+      if(checkBuildingOfCompany(companyName,s)){
         model.addUnits(s,noOfBedrooms,noOfBathroom,price,value,unitNo);
       }
       else {
@@ -160,7 +160,16 @@ public class ControllerImpl implements ControllerFeatures{
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
     }
+  }
 
+  private boolean checkBuildingOfCompany(String companyName,String bName){
+    List<String> b;
+    b=model.loadCompanyBuildings(companyName);
+    if(b.contains(bName)){
+      return true;
+    }else {
+      return false;
+    }
   }
 
   @Override
@@ -173,19 +182,27 @@ public class ControllerImpl implements ControllerFeatures{
   }
 
   @Override
-  public void loadMaintenancePersonnel(String buildingName) {
+  public void loadMaintenancePersonnel(String buildingName,String companyName) {
     try{
-      v.showMaintenancePersonnel(model.getMaintenancePersonnel(buildingName));
+      if(checkBuildingOfCompany(companyName,buildingName)){
+        v.showMaintenancePersonnel(model.getMaintenancePersonnel(buildingName));
+      }else {
+        v.showErrorMessage("Building name not associated with company");
+      }
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
     }
   }
 
   @Override
-  public void addMaintenancePersonnel(String building, String mName, String no) {
+  public void addMaintenancePersonnel(String building, String mName, String no,String companyName) {
     try{
-      model.addMaintenancePersonnel(building,mName,no);
-      v.successMessage();
+      if(checkBuildingOfCompany(companyName,building)){
+        model.addMaintenancePersonnel(building,mName,no);
+        v.successMessage();
+      }else {
+        v.showErrorMessage("Building name not associated with company");
+      }
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
     }
@@ -202,13 +219,19 @@ public class ControllerImpl implements ControllerFeatures{
   }
 
   @Override
-  public void getTenantOfParticularBuilding(String bName, int unit) {
+  public void getTenantOfParticularBuilding(String bName, int unit,String companyName) {
     try{
-      if(model.getTenants(bName,unit)==null){
-        v.showMessage("No tenant is associated with the unit");
+      if(checkBuildingOfCompany(companyName,bName)){
+        if(model.getTenants(bName,unit)==null){
+          v.showMessage("No tenant is associated with the unit");
+        }else{
+          v.showMessage("The tenant name associated with the unit is " + model.getTenants(bName,unit));
+        }
       }else{
-        v.showMessage("The tenant name associated with the unit is " + model.getTenants(bName,unit));
+        v.showMessage("Building not associated with Company");
+        return;
       }
+
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());
     }
@@ -220,8 +243,12 @@ public class ControllerImpl implements ControllerFeatures{
   }
 
   @Override
-  public void addAmenity(String bName, String amenity) {
+  public void addAmenity(String bName, String amenity,String companyName) {
     try{
+      if(checkBuildingOfCompany(companyName,bName)){
+        v.showMessage("Building not associated with company");
+        return;
+      }
       model.addAmenity(bName,amenity);
       v.successMessage();
     }catch (Exception e){
@@ -247,6 +274,37 @@ public class ControllerImpl implements ControllerFeatures{
       }
       else {
         v.showMessage("Unit number "+unitNo+" is not available in building name: "+buildingName);
+      }
+    }catch (Exception e){
+      v.showErrorMessage(e.getMessage());
+    }
+  }
+
+  @Override
+  public void showBuildingAndAvailableUnit(String name) {
+    try{
+      List<String> bNames;
+      bNames=model.loadCompanyBuildings(name);
+      Map<String,String> l;
+      for (String bn:bNames ) {
+        l=model.getParticularBuildingInfo(bn);
+        v.showMessage("The available units in "+bn);
+        v.showMessage(l.get("unit"));
+      }
+    }catch (Exception e){
+      v.showErrorMessage(e.getMessage());
+    }
+  }
+
+  @Override
+  public void showCompanyTenantInformation(String tenantName, String name) {
+    try{
+      String bName;
+      bName= model.getTenantBuilding(tenantName);
+      if(checkBuildingOfCompany(name,bName)){
+        this.getLeaseInfo(tenantName);
+      }else {
+        v.showMessage("Tenant not associated with the company");
       }
     }catch (Exception e){
       v.showErrorMessage(e.getMessage());

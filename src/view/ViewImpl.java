@@ -175,7 +175,7 @@ public class ViewImpl implements View{
           //view maintenance personnel of a building
           out.println("Enter building name to load maintenance personnel");
           String buildingName=sc.nextLine();
-          c.loadMaintenancePersonnel(buildingName);
+          c.loadMaintenancePersonnel(buildingName,name);
           this.goBackMessage();
           break;
         case 5:
@@ -186,24 +186,30 @@ public class ViewImpl implements View{
           String mName=sc.nextLine();
           out.println("Enter the phone number associated to the personnel");
           String no=sc.nextLine();
-          c.addMaintenancePersonnel(building,mName,no);
+          c.addMaintenancePersonnel(building,mName,no,name);
           this.goBackMessage();
           break;
         case 6:
           // add tenants to unit
+          this.showBuildingsUnits(name);
+          out.println("Select from above units to add");
           this.addTenantstoUnit(name);
           break;
         case 7:
           // get tenants
-          this.getTenantOfParticularBuilding();
+          this.getTenantOfParticularBuilding(name);
           break;
         case 8:
           //add amenity
-          this.addAmenity();
+          this.addAmenity(name);
           break;
         case 9:
-          //details about a unit
-          this.showUnitDetails();
+          //Lease information of a unit
+          out.println("Enter the name of the tenant");
+          String tenantName;
+          tenantName=sc.nextLine();
+          c.showCompanyTenantInformation(tenantName,name);
+          this.goBackMessage();
           break;
         case 10:
           break;
@@ -215,6 +221,11 @@ public class ViewImpl implements View{
       }
     }
   }
+
+  private void showBuildingsUnits(String name) {
+    c.showBuildingAndAvailableUnit(name);
+  }
+
 
   private void showUnitDetails() {
     out.println("1.Check availability of a unit");
@@ -248,7 +259,7 @@ public class ViewImpl implements View{
     }
   }
 
-  private void addAmenity() {
+  private void addAmenity(String cName) {
     String bName;
     out.println("Enter the name of the building to add the amenity");
     bName=sc.nextLine();
@@ -256,11 +267,11 @@ public class ViewImpl implements View{
     out.println("Choose one of the amenities from above");
     String am;
     am=sc.nextLine();
-    c.addAmenity(bName,am);
+    c.addAmenity(bName,am,cName);
     this.goBackMessage();
   }
 
-  private void getTenantOfParticularBuilding() {
+  private void getTenantOfParticularBuilding(String cName) {
     String bName;
     int unit;
     try{
@@ -268,7 +279,7 @@ public class ViewImpl implements View{
       bName= sc.nextLine();
       out.println("Enter the unit no");
       unit=Integer.parseInt(sc.nextLine().trim());
-      c.getTenantOfParticularBuilding(bName,unit);
+      c.getTenantOfParticularBuilding(bName,unit,cName);
       this.goBackMessage();
     }catch (Exception e){
       this.showErrorMessage("Invalid unit Number");
@@ -314,7 +325,6 @@ public class ViewImpl implements View{
     l=this.createNewBuildingForm();
     try{
       c.createNewBuilding(name,l);
-      this.showMessage("Building Created Successfully");
       out.println("Create units in the building");
       addUnitHelper(l,name);
     }catch (Exception e){
@@ -409,13 +419,7 @@ public class ViewImpl implements View{
       switch (ch){
         case 1:
           //get active request
-          String bName;
-          String unitNo;
-          out.println("Enter your building Name");
-          bName= sc.nextLine();
-          out.println("Enter your unit number");
-          unitNo=sc.nextLine();
-          c.showMaintenanceRequest(bName,unitNo);
+          c.showMaintenanceRequest(name);
           this.goBackMessage();
           break;
         case 2:
@@ -426,10 +430,11 @@ public class ViewImpl implements View{
           //controller call
           break;
         case 3:
-          List<String> requestDetails;
-          requestDetails=this.createMaintenanceRequestForm();
+          out.println("Enter the description of your problem in 200 characters");
+          String desc;
+          desc=sc.nextLine();
           //controller create request;
-          c.createMaintenanceRequest(requestDetails.get(0),requestDetails.get(1),requestDetails.get(2));
+          c.createMaintenanceRequest(name,desc);
           this.goBackMessage();
           break;
         default:
@@ -508,7 +513,7 @@ public class ViewImpl implements View{
     out.println("6.Add tenants to a unit");
     out.println("7.Get Tenants of a particular unit in a building");
     out.println("8.Add amenity to a building");
-    out.println("9.Show Details About a particular Unit");
+    out.println("9.Show tenant lease information");
     out.println("10.Logout");
   }
 
@@ -572,7 +577,6 @@ public class ViewImpl implements View{
         out.println("Name: "+name+" Phone Number: "+maintenancePersonnel.get(name));
       }
     }
-    this.goBackMessage();
   }
 
   @Override
