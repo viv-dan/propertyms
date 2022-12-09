@@ -5,6 +5,8 @@ import java.util.Map;
 
 public interface property {
 
+  void setDBUsername(String uname, String pwd);
+
   /**
    * The method validates the tenant login details and returns the tenant id..
    *
