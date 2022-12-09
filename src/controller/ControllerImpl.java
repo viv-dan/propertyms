@@ -118,6 +118,10 @@ public class ControllerImpl implements ControllerFeatures{
       String bName;
       bName= model.getTenantBuilding(tenantName);
       List<String> l =model.getLeaseInfo(tenantName);
+      if(l.isEmpty()){
+        v.showMessage("No lease associated with user");
+        return;
+      }
       unit= Integer.parseInt(l.get(0));
       model.createMaintenanceRequest(bName,unit,desc);
       v.successMessage();
@@ -133,6 +137,10 @@ public class ControllerImpl implements ControllerFeatures{
       String bName;
       bName= model.getTenantBuilding(tenantName);
       List<String> l =model.getLeaseInfo(tenantName);
+      if(l.isEmpty()){
+        v.showMessage("No lease present for tenant");
+        return;
+      }
       unit= Integer.parseInt(l.get(0));
       List<String> request=model.getMaintenanceRequests(bName,unit);
       if(request.isEmpty() || request==null){
