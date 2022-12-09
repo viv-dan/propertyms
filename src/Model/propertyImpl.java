@@ -574,7 +574,6 @@ public class propertyImpl implements property {
       }
       return hm;
     }catch(Exception e){
-      System.out.println(e.getMessage());
       throw new RuntimeException("Cannot get building's metadata!!");
     }
   }
@@ -602,7 +601,17 @@ public class propertyImpl implements property {
    */
   @Override
   public void updateRequestStatus(String desc, String buildingName, int unitNo) {
-
+    String sql_string = "call propertyproject.update_request_status(?,?,?)";
+    try{
+      this.getConnection();
+      PreparedStatement ps = con.prepareStatement(sql_string);
+      ps.setString(1,buildingName);
+      ps.setString(2,desc);
+      ps.setInt(3,unitNo);
+      ps.executeQuery();
+    }catch(Exception e){
+      throw new RuntimeException("Cannot update maintenance request!!");
+    }
   }
 
   private static boolean isValid(String s)
@@ -611,4 +620,5 @@ public class propertyImpl implements property {
     Matcher m = p.matcher(s);
     return (m.matches());
   }
+
 }

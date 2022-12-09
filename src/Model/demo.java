@@ -35,6 +35,8 @@ public class demo {
     //System.out.println(p.getAllBuildings());
     //System.out.println(p.loadCompanyBuildings("dan realty"));
     //System.out.println(p.validateCompany("dan realty", "bostonA6#"));
-    System.out.println(p.getBuildingMetadata("The Longwood"));
+    //System.out.println(p.getBuildingMetadata("The Longwood"));
+    //p.updateRequestStatus("Pipes are leakingin the hall", "The Brynx", 1001);
+    //p.deleteBuilding("The Brynx");
     }
 }
