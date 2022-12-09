@@ -16,10 +16,20 @@ import java.util.regex.Pattern;
 
 public class propertyImpl implements property {
 
-  private final String url = "jdbc:mysql://localhost:3306/mysql";
-  private final String username = "root";
-  private final String password = "bostonA6#";
+  private static String url = "jdbc:mysql://localhost:3306/mysql";
+  private static String username = "root";
+  private String password = "bostonA6#";
   private static Connection con;
+
+  public void setDBUsername(String uname, String pwd){
+    username = uname;
+    password = pwd;
+    this.getConnection();
+  }
+
+  public void closeConnection() throws SQLException {
+    this.con.close();
+  }
 
   private Connection getConnection() {
     if(con==null) {
