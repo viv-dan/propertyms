@@ -116,7 +116,7 @@ public class ViewImpl implements View{
             this.goBackMessage();
         }
       }catch (Exception e){
-        if(e.getMessage().equals("Invalid Credentials")){
+        if(e.getMessage().contains("Invalid Credentials")){
           this.showMessage(e.getMessage());
         }else{
           this.showInputError();
